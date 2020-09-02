@@ -1,10 +1,4 @@
-import {
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLID,
-  GraphQLString,
-  GraphQLList,
-} from 'graphql';
+import { GraphQLSchema, GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList } from 'graphql';
 
 const PersonType = new GraphQLObjectType({
   name: 'Person',
@@ -27,28 +21,14 @@ const QueryType = new GraphQLObjectType({
       type: new GraphQLList(PersonType),
       resolve: () => peopleData,
     },
-  },
-});
-
-const MutationType = new GraphQLObjectType({
-  name: 'Mutation',
-  fields: {
-    addPerson: {
+    person: {
       type: PersonType,
-      args: { 
-        name: { type: GraphQLString },
+      args: {
+        id: { type: GraphQLID },
       },
-      resolve: function (_, { name }) {
-        const person = {
-          id: peopleData[peopleData.length - 1].id + 1,
-          name,
-        };
-
-        peopleData.push(person);
-        return person;
-      }
+      resolve: (_, { id }) => peopleData.find((p) => p.id === Number(id)),
     },
   },
 });
 
-export const schema = new GraphQLSchema({ query: QueryType, mutation: MutationType });
+export const schema = new GraphQLSchema({ query: QueryType });
